@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptographic Explorer</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f1f3a, #000000); /* Dark blue/purple gradient background */
+            min-height: 100vh;
+        }
+        .card {
+            background-color: #2a2a47; /* Darker card background */
+            border: 2px solid #5a5a8a;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(70, 70, 150, 0.4);
+        }
+        .btn-primary {
+            background-color: #f72585; /* Vibrant Pink */
+            color: white;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #d81b60;
+        }
+        .input-style {
+            background-color: #1a1a2e;
+            border-color: #4a4a6b;
+            color: #e0e0f0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="text-center mb-10 text-white">
+        <h1 class="text-5xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-teal-400">
+            Crypto-Hash Explorer
+        </h1>
+        <p class="text-xl text-gray-300">Secure Your Secrets & Compute Digital Fingerprints</p>
+    </header>
+
+    <!-- Main Grid Container -->
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- CARD 1: Cipher Tools -->
+        <div class="card p-6 rounded-xl shadow-2xl">
+            <h2 class="text-3xl font-bold text-teal-400 mb-6 border-b pb-3 border-teal-600">
+                1. Cipher Tools (Symmetric)
+            </h2>
+
+            <!-- Input Area -->
+            <label for="cipherInput" class="block text-gray-300 mb-2 font-medium">Input Message:</label>
+            <textarea id="cipherInput" rows="5" placeholder="Enter text to encrypt or decrypt..."
+                class="input-style w-full p-3 rounded-lg focus:ring-pink-500 focus:border-pink-500 mb-4"></textarea>
+
+            <!-- Controls -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <!-- Cipher Selector -->
+                <div>
+                    <label for="cipherMethod" class="block text-gray-300 mb-2 font-medium text-sm">Cipher Method:</label>
+                    <select id="cipherMethod"
+                        class="input-style w-full p-3 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+                        <option value="caesar">Caesar Cipher (Shift)</option>
+                        <option value="rot13">ROT13 (Fixed Shift)</option>
+                    </select>
+                </div>
+                <!-- Key Input (Shift) -->
+                <div>
+                    <label for="caesarKey" class="block text-gray-300 mb-2 font-medium text-sm">Caesar Shift Key (1-25):</label>
+                    <input type="number" id="caesarKey" value="3" min="1" max="25"
+                        class="input-style w-full p-3 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+                </div>
+                <!-- Action Buttons -->
+                <div class="sm:col-span-1 flex flex-col justify-end gap-2 pt-2 sm:pt-0">
+                    <button onclick="processCipher('encrypt')" class="btn-primary w-full p-3 rounded-lg font-bold hover:shadow-lg">
+                        Encrypt
+                    </button>
+                    <button onclick="processCipher('decrypt')" class="bg-indigo-500 hover:bg-indigo-700 text-white w-full p-3 rounded-lg font-bold hover:shadow-lg">
+                        Decrypt
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Area -->
+            <label for="cipherOutput" class="block text-gray-300 mb-2 font-medium">Output:</label>
+            <textarea id="cipherOutput" rows="5" readonly placeholder="Encrypted or Decrypted result will appear here..."
+                class="input-style w-full p-3 rounded-lg mb-4 text-pink-300"></textarea>
+            <button onclick="copyToClipboard('cipherOutput')" class="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-lg text-sm">
+                Copy Output
+            </button>
+        </div>
+
+        <!-- CARD 2: Hashing Tools -->
+        <div class="card p-6 rounded-xl shadow-2xl">
+            <h2 class="text-3xl font-bold text-pink-400 mb-6 border-b pb-3 border-pink-600">
+                2. Hashing Tools (Asymmetric)
+            </h2>
+
+            <!-- Input Area -->
+            <label for="hashInput" class="block text-gray-300 mb-2 font-medium">Input Data:</label>
+            <textarea id="hashInput" rows="5" placeholder="Enter any data (text, passphrase) to hash..."
+                class="input-style w-full p-3 rounded-lg focus:ring-teal-500 focus:border-teal-500 mb-4"></textarea>
+
+            <!-- Controls -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <!-- Hash Selector -->
+                <div class="flex-grow">
+                    <label for="hashMethod" class="block text-gray-300 mb-2 font-medium text-sm">Hash Algorithm:</label>
+                    <select id="hashMethod"
+                        class="input-style w-full p-3 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                        <option value="SHA-256">SHA-256 (Secure Hash)</option>
+                        <option value="SHA-512">SHA-512 (Very Secure Hash)</option>
+                    </select>
+                </div>
+                <!-- Action Button -->
+                <div class="sm:w-1/3 flex items-end">
+                    <button onclick="processHash()" class="btn-primary w-full p-3 rounded-lg font-bold hover:shadow-lg">
+                        Generate Hash
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Area -->
+            <label for="hashOutput" class="block text-gray-300 mb-2 font-medium">Hash Output (Fingerprint):</label>
+            <textarea id="hashOutput" rows="5" readonly placeholder="The resulting hash will appear here..."
+                class="input-style w-full p-3 rounded-lg mb-4 text-teal-300"></textarea>
+            <button onclick="copyToClipboard('hashOutput')" class="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-lg text-sm">
+                Copy Output
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Notification Message Area (for copy success/errors) -->
+    <div id="notification" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-xl opacity-0 transition-opacity duration-300"></div>
+
+    <script>
+        // Utility function to show temporary notification
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.remove('opacity-0');
+            notification.classList.add('opacity-100');
+            notification.style.backgroundColor = isError ? '#ef4444' : '#10b981'; // Red for error, Green for success
+
+            setTimeout(() => {
+                notification.classList.remove('opacity-100');
+                notification.classList.add('opacity-0');
+            }, 3000);
+        }
+
+        // Utility function to copy content to clipboard
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            try {
+                // Use document.execCommand('copy') for better compatibility in iFrames
+                element.select();
+                element.setSelectionRange(0, 99999); // For mobile devices
+                document.execCommand('copy');
+                showNotification('Copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                showNotification('Failed to copy text.', true);
+            }
+        }
+
+        /* ----------------------- CRYPTOGRAPHY FUNCTIONS ----------------------- */
+
+        /**
+         * Performs a Caesar cipher on the input text.
+         * @param {string} text - The input string.
+         * @param {number} shift - The number of places to shift (positive for encrypt, negative for decrypt).
+         * @returns {string} The processed string.
+         */
+        function caesarCipher(text, shift) {
+            // Handle negative shifts correctly for decryption
+            shift = shift % 26;
+            if (shift < 0) {
+                shift += 26;
+            }
+
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text.charCodeAt(i);
+
+                // Uppercase letters (A=65, Z=90)
+                if (char >= 65 && char <= 90) {
+                    char = ((char - 65 + shift) % 26) + 65;
+                }
+                // Lowercase letters (a=97, z=122)
+                else if (char >= 97 && char <= 122) {
+                    char = ((char - 97 + shift) % 26) + 97;
+                }
+                // Other characters (spaces, punctuation, etc.) are left alone.
+
+                result += String.fromCharCode(char);
+            }
+            return result;
+        }
+
+        /**
+         * Main function to handle Cipher processing (Encrypt/Decrypt).
+         * @param {string} mode - 'encrypt' or 'decrypt'.
+         */
+        function processCipher(mode) {
+            const inputElement = document.getElementById('cipherInput');
+            const outputElement = document.getElementById('cipherOutput');
+            const methodElement = document.getElementById('cipherMethod');
+            const keyElement = document.getElementById('caesarKey');
+
+            const text = inputElement.value;
+            const method = methodElement.value;
+            let shift = parseInt(keyElement.value, 10) || 0;
+
+            if (text.trim() === '') {
+                showNotification('Please enter a message to cipher.', true);
+                return;
+            }
+
+            let result = '';
+
+            if (method === 'rot13') {
+                // ROT13 is Caesar with a fixed shift of 13
+                shift = 13;
+                // ROT13 is reciprocal, so encrypt and decrypt are the same
+                result = caesarCipher(text, shift);
+            } else if (method === 'caesar') {
+                if (shift < 1 || shift > 25) {
+                    showNotification('Caesar key must be between 1 and 25.', true);
+                    return;
+                }
+                // Decrypt is simply an inverse shift
+                const finalShift = (mode === 'encrypt') ? shift : -shift;
+                result = caesarCipher(text, finalShift);
+            }
+
+            outputElement.value = result;
+            showNotification(`${mode === 'encrypt' ? 'Encrypted' : 'Decrypted'} successfully using ${method.toUpperCase()}!`);
+        }
+
+
+        /* -------------------------- HASHING FUNCTIONS -------------------------- */
+
+        /**
+         * Converts ArrayBuffer to hexadecimal string.
+         * @param {ArrayBuffer} buffer - The buffer containing the hash bytes.
+         * @returns {string} The hexadecimal representation.
+         */
+        function bufferToHex(buffer) {
+            return Array.prototype.map.call(new Uint8Array(buffer), x => (('00' + x.toString(16)).slice(-2))).join('');
+        }
+
+        /**
+         * Main function to handle Hashing.
+         */
+        async function processHash() {
+            const inputElement = document.getElementById('hashInput');
+            const outputElement = document.getElementById('hashOutput');
+            const methodElement = document.getElementById('hashMethod');
+
+            const text = inputElement.value;
+            const algorithm = methodElement.value;
+
+            if (text.trim() === '') {
+                showNotification('Please enter data to hash.', true);
+                return;
+            }
+
+            outputElement.value = 'Calculating hash...';
+
+            try {
+                // Encode the text into an ArrayBuffer
+                const encoder = new TextEncoder();
+                const data = encoder.encode(text);
+
+                // Use the native crypto API for secure hashing
+                const hashBuffer = await crypto.subtle.digest(algorithm, data);
+                const hashHex = bufferToHex(hashBuffer);
+
+                outputElement.value = hashHex;
+                showNotification(`Hash generated using ${algorithm}!`);
+
+            } catch (error) {
+                console.error('Hashing error:', error);
+                outputElement.value = 'Error generating hash.';
+                showNotification(`Error: Could not generate hash. ${error.message}`, true);
+            }
+        }
+
+        // Initialize script on window load if needed, but it's not strictly necessary here
+        // as all functions are called via inline 'onclick' handlers.
+    </script>
+
+</body>
+</html>
